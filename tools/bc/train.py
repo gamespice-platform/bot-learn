@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Behaviour-cloning trainer: a dotbot-bc v1 export in, a dotbot-mlp v1 net (.dotmlp + .f32) out.
+"""Behaviour-cloning trainer: a gsbot-bc v1 export in, a gsbot-mlp v1 net (.gsmlp + .f32) out.
 
 Plain numpy, no Godot and no PyTorch: the net is at most two hidden layers of 64 tanh units, which trains in seconds on a CPU.
 
@@ -23,9 +23,9 @@ import tempfile
 
 import numpy as np
 
-EXPORT_FORMAT = "dotbot-bc"
+EXPORT_FORMAT = "gsbot-bc"
 EXPORT_VERSION = 1
-MLP_FORMAT = "dotbot-mlp"
+MLP_FORMAT = "gsbot-mlp"
 MLP_VERSION = 1
 MAX_MANIFEST_BYTES = 8 * 1024 * 1024
 MAX_WEIGHT_BYTES = 4 * 1024 * 1024
@@ -272,7 +272,7 @@ def write_net(out_dir, name, manifest, net, metrics):
     }
     with open(os.path.join(out_dir, name + ".f32"), "wb") as f:
         f.write(blob)
-    with open(os.path.join(out_dir, name + ".dotmlp"), "w", encoding="utf-8") as f:
+    with open(os.path.join(out_dir, name + ".gsmlp"), "w", encoding="utf-8") as f:
         json.dump(header, f, indent=1, sort_keys=True)
         f.write("\n")
     return header
@@ -296,7 +296,7 @@ def runtime_forward(header, blob, obs_raw):
 # ---------------------------------------------------------------- synthetic export (tests)
 
 def write_synthetic_export(directory, seed=7, rows=3000, held=500):
-    """A dotbot-bc v1 export of a known function, laid out as GSBotDemoExport writes it (for tests without a recording)."""
+    """A gsbot-bc v1 export of a known function, laid out as GSBotDemoExport writes it (for tests without a recording)."""
     rng = np.random.default_rng(seed)
     obs_fields = [{"name": "position", "size": 3, "scale": 100.0, "discrete": False}, {"name": "velocity", "size": 3, "scale": 20.0, "discrete": False}]
     act_fields = [{"name": "yaw", "size": 1, "scale": 3.14159, "discrete": False}, {"name": "move", "size": 2, "scale": 1.0, "discrete": False}, {"name": "jump", "size": 1, "scale": 1.0, "discrete": True}]
@@ -387,7 +387,7 @@ def selftest():
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser(description="Behaviour-cloning trainer: dotbot-bc export in, .dotmlp and .f32 out.")
+    ap = argparse.ArgumentParser(description="Behaviour-cloning trainer: gsbot-bc export in, .gsmlp and .f32 out.")
     ap.add_argument("export_dir", nargs="?")
     ap.add_argument("--out", default=".")
     ap.add_argument("--name", default=None)
@@ -415,7 +415,7 @@ def main(argv=None):
     except ExportError as e:
         print("refused: %s" % e, file=sys.stderr)
         return 2
-    print("wrote %s.dotmlp and %s.f32 in %s; held-out %s" % (name, name, a.out, json.dumps(metrics["held_out"])))
+    print("wrote %s.gsmlp and %s.f32 in %s; held-out %s" % (name, name, a.out, json.dumps(metrics["held_out"])))
     return 0
 
 

@@ -11,7 +11,7 @@ Read the family [CLAUDE.md](../../CLAUDE.md) first; this file is only what is sp
 | Read | Before |
 | --- | --- |
 | [docs/design.md](docs/design.md) | anything: inputs, outputs, the boundary, the pipeline, hygiene, testing |
-| [dot-bot demonstration recorder](../dot-bot/docs/demonstration-recorder.md) | touching an input format |
+| [gs-bot demonstration recorder](../gs-bot/docs/demonstration-recorder.md) | touching an input format |
 
 ## Rules that bite
 
@@ -25,4 +25,4 @@ Read the family [CLAUDE.md](../../CLAUDE.md) first; this file is only what is sp
 
 ## Validating
 
-Behaviour-cloning trainer `tools/bc/train.py` (plain numpy; a worktree-local `python3 -m venv .venv && .venv/bin/pip install numpy`): reads a `dotbot-bc` v1 export, writes `.dotmlp` + `.f32` (`dotbot-mlp` v1). `.venv/bin/python tools/bc/train.py --selftest` trains on a synthetic export. Parity with dot-bot's `GSBotMlp`: `tools/bc/parity_make.py <dir>`, then `PARITY_DIR=<dir> godot --headless --path <dot-bot checkout> --script tools/bc/parity.gd` (max abs diff must be under 1e-5). Other tools are not built yet.
+Behaviour-cloning trainer `tools/bc/train.py` (plain numpy; a worktree-local `python3 -m venv .venv && .venv/bin/pip install numpy`): reads a `gsbot-bc` v1 export, writes `.gsmlp` + `.f32` (`gsbot-mlp` v1). `.venv/bin/python tools/bc/train.py --selftest` trains on a synthetic export. Parity with gs-bot's `GSBotMlp`: `tools/bc/parity_make.py <dir>`, then `PARITY_DIR=<dir> godot --headless --path <gs-bot checkout> --script tools/bc/parity.gd` (max abs diff must be under 1e-5). Other tools are not built yet.

@@ -2,20 +2,20 @@
 
 ## Why a separate repository
 
-dot-bot-record records (the demonstration recorder) and already harvests rides on the motor. What it does not and should not hold is the learning: clustering, percentile folding, and later a small network. That code has heavy dependencies (numerical libraries, a GPU trainer), runs for minutes to hours, and is useless on a game server or in a browser build. Keeping it here keeps the runtime addons small and means a game's dependency list never grows because someone wants better bots.
+gs-bot-record records (the demonstration recorder) and already harvests rides on the motor. What it does not and should not hold is the learning: clustering, percentile folding, and later a small network. That code has heavy dependencies (numerical libraries, a GPU trainer), runs for minutes to hours, and is useless on a game server or in a browser build. Keeping it here keeps the runtime addons small and means a game's dependency list never grows because someone wants better bots.
 
-Note: the recorder is the separate addon GameSpice Bot Record (`addons/dot_bot_record/`, extracted from GameSpice Bot). This repository is its offline consumer.
+Note: the recorder is the separate addon GameSpice Bot Record (`addons/gs_bot_record/`, extracted from GameSpice Bot). This repository is its offline consumer.
 
 ## Inputs
 
-All come from dot-bot-record's recorder, through its stores ([demonstration-recorder](../../dot-bot-record/docs/demonstration-recorder.md)).
+All come from gs-bot-record's recorder, through its stores ([demonstration-recorder](../../gs-bot-record/docs/demonstration-recorder.md)).
 
 | Input | What |
 | --- | --- |
 | Episodes | `map_id`, `map_version`, `schema_id`, `kind`, `key`, `start` (plain values), `rate`, `ticks` (observation then action per kept tick, float32), `outcome`, `day` |
 | `verified`, `score` | written by GameSpice Bot's ride harvest after replaying on the motor; only `verified` rides are trusted as routes |
 | Adaptive rate | episodes on a sparse key are kept at the tick rate, a well-covered key at the base rate; the learner reads `rate` per episode and must not assume a fixed step |
-| Stores | the JSON store's files (`<path>/<map_id>@<version>/<kind>.json`), or a SQL dump of `dot_bot_demos`; the schema's field list (names, sizes, scales) travels in the export manifest |
+| Stores | the JSON store's files (`<path>/<map_id>@<version>/<kind>.json`), or a SQL dump of `gs_bot_demos`; the schema's field list (names, sizes, scales) travels in the export manifest |
 
 A different `map_version` or `schema_id` is a different set and is never pooled. Bots never appear as subjects, so no input is bot-generated.
 
@@ -57,7 +57,7 @@ Tuned params (`bot_params.json`): percentile-derived values for rows of `GSBotPr
 }
 ```
 
-Rules: a number outside the spec's range or below a preset floor is clamped by the loader, not trusted; a suggestion is reviewed by a person and committed, never applied by a server by itself; later, network weights follow GameSpice Bot's `.dotmlp` plan, still as plain files.
+Rules: a number outside the spec's range or below a preset floor is clamped by the loader, not trusted; a suggestion is reviewed by a person and committed, never applied by a server by itself; later, network weights follow GameSpice Bot's `.gsmlp` plan, still as plain files.
 
 ## The boundary
 
@@ -72,7 +72,7 @@ In order of attempt; each stage must beat the one before on a measured metric be
 
 1. **Plain statistics.** Per map version: place counts on a grid with decay, reaction and aim percentiles, landing rates per ride. No model, fully explainable, runs in seconds.
 2. **Route clustering.** Recorded rides on one edge are resampled to a fixed length, clustered (k-medoids or DBSCAN on trajectory distance), and each cluster's medoid is the representative route, with support (cluster size) and a verified landing rate. Outliers are dropped. This replaces "best of N by score" with a few distinct lines, so bots do not all take one.
-3. **Small ML.** A small multilayer perceptron cloned from episodes, dataset aggregation where a simulator exists, trained on a GPU box through the family's `gpu.sh`. Gated by held-out evaluation against the fixed baseline, per map. Never a language model in a control loop. dot-bot's recorder doc sketches the dataset shards and `.dotmlp` format; this repository owns the trainer.
+3. **Small ML.** A small multilayer perceptron cloned from episodes, dataset aggregation where a simulator exists, trained on a GPU box through the family's `gpu.sh`. Gated by held-out evaluation against the fixed baseline, per map. Never a language model in a control loop. gs-bot's recorder doc sketches the dataset shards and `.gsmlp` format; this repository owns the trainer.
 
 All stages read the same export manifest and write the same output files, so a stage can be swapped without a game noticing.
 
@@ -97,6 +97,6 @@ The repository has no recordings and must still be tested.
 
 ## Open questions
 
-- Decided: verification (the replay on the motor) stays in dot-bot, because bots need it at runtime; this repository only consumes the `verified` flags.
+- Decided: verification (the replay on the motor) stays in gs-bot, because bots need it at runtime; this repository only consumes the `verified` flags.
 - Language for the trainers: plain Python with a numerical library, run outside Godot, is the working assumption.
-- Where exports are published (committed beside a map, or delivered with a dot-cloud pack) is a game decision.
+- Where exports are published (committed beside a map, or delivered with a gs-cloud pack) is a game decision.
