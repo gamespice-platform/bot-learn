@@ -2,12 +2,12 @@ extends SceneTree
 func _init() -> void:
 	var dir := OS.get_environment("PARITY_DIR")
 	var cases: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(dir + "/cases.json"))
-	var res := DotBotMlp.load_file(dir + "/toy")
+	var res := GSBotMlp.load_file(dir + "/toy")
 	if not res.ok:
 		print("LOAD FAILED: ", res.message if "message" in res else res)
 		quit(1)
 		return
-	var net: DotBotMlp = res.value
+	var net: GSBotMlp = res.value
 	print(net.describe())
 	var worst := 0.0
 	for i in cases["obs"].size():

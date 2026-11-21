@@ -7,7 +7,7 @@ Plain numpy, no Godot and no PyTorch: the net is at most two hidden layers of 64
                      [--dagger file.py:function --dagger-rounds N]
     python3 train.py --selftest
 
-Inputs are divided by the manifest's scale, as DotBotMlp does at run time. A continuous action field is regressed on value/scale and its scale is folded into the last layer's weights, so the net outputs raw action values like the rows hold; a discrete (button) field is a logit trained with binary cross entropy, so readers apply a sigmoid.
+Inputs are divided by the manifest's scale, as GSBotMlp does at run time. A continuous action field is regressed on value/scale and its scale is folded into the last layer's weights, so the net outputs raw action values like the rows hold; a discrete (button) field is a logit trained with binary cross entropy, so readers apply a sigmoid.
 
 DAgger hook: --dagger names `file.py:function`; after each round the function is called as `function(policy, round)` with `policy(obs_raw[n, obs]) -> action_raw[n, act]` (discrete fields as probabilities) and returns None or `(obs_raw, action_raw)` rows labelled by the expert on states the policy visited. They are appended to the training set and training continues.
 """
@@ -279,7 +279,7 @@ def write_net(out_dir, name, manifest, net, metrics):
 
 
 def runtime_forward(header, blob, obs_raw):
-    """What DotBotMlp computes, from the written files only (float32 math like the runtime)."""
+    """What GSBotMlp computes, from the written files only (float32 math like the runtime)."""
     x = np.asarray(obs_raw, np.float32) / np.asarray(header["input_scales"], np.float32)
     sizes, off = header["sizes"], 0
     flat = np.frombuffer(blob, dtype="<f4")
@@ -296,7 +296,7 @@ def runtime_forward(header, blob, obs_raw):
 # ---------------------------------------------------------------- synthetic export (tests)
 
 def write_synthetic_export(directory, seed=7, rows=3000, held=500):
-    """A dotbot-bc v1 export of a known function, laid out as DotBotDemoExport writes it (for tests without a recording)."""
+    """A dotbot-bc v1 export of a known function, laid out as GSBotDemoExport writes it (for tests without a recording)."""
     rng = np.random.default_rng(seed)
     obs_fields = [{"name": "position", "size": 3, "scale": 100.0, "discrete": False}, {"name": "velocity", "size": 3, "scale": 20.0, "discrete": False}]
     act_fields = [{"name": "yaw", "size": 1, "scale": 3.14159, "discrete": False}, {"name": "move", "size": 2, "scale": 1.0, "discrete": False}, {"name": "jump", "size": 1, "scale": 1.0, "discrete": True}]

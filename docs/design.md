@@ -37,7 +37,7 @@ Ride routes (`rides.json`), ranked per edge, in the shape GameSpice Bot's ride b
 }
 ```
 
-Nav hints (`nav_hints.json`): per-cell or per-waypoint weights and optional off-mesh link suggestions, consumed through `DotBotWorld.waypoints_fn`.
+Nav hints (`nav_hints.json`): per-cell or per-waypoint weights and optional off-mesh link suggestions, consumed through `GSBotWorld.waypoints_fn`.
 
 ```json
 {
@@ -47,7 +47,7 @@ Nav hints (`nav_hints.json`): per-cell or per-waypoint weights and optional off-
 }
 ```
 
-Tuned params (`bot_params.json`): percentile-derived values for rows of `DotBotProfile.SPEC`, per game and map version.
+Tuned params (`bot_params.json`): percentile-derived values for rows of `GSBotProfile.SPEC`, per game and map version.
 
 ```json
 {
@@ -63,7 +63,7 @@ Rules: a number outside the spec's range or below a preset floor is clamped by t
 
 - **No training code in a runtime addon.** GameSpice Bot and games contain loaders, validators and the forward pass of a tiny network at most. Statistics, clustering, trainers and evaluation harnesses live here.
 - **Bots only load exported files.** They never read raw episodes, never call this repository, and never learn during play.
-- **The file formats are the interface.** A loader checks `format` and `schema_id` and refuses a mismatch with a `DotResult` error, so the two sides can change independently.
+- **The file formats are the interface.** A loader checks `format` and `schema_id` and refuses a mismatch with a `GSResult` error, so the two sides can change independently.
 - This repository needs no Godot at run time. Tools that need the motor (verification, evaluation on a simulator) call into a game's headless scene and are the one exception, listed per tool.
 
 ## Training pipeline options
