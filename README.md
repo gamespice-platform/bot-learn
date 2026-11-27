@@ -16,6 +16,10 @@ Read the family `CLAUDE.md` and the [CLAUDE.md](CLAUDE.md) in this repository fi
 
 ## Used by
 
+### Zee's Games
+
+Zee's Games is a collection of games I made on GameSpice, for demonstration and for fun. They show what the platform can do, and they run on live servers you can join. Anybody can create games on GameSpice, and everything in the family is its own repository and can be used separately from the games.
+
 No game uses it yet, because there is no code. The bots in [Zee's Games](https://zeesgames.com) run on [GameSpice Bot](https://github.com/gamespice-platform/bot), and this repository describes the offline step that would feed it. It is built with Claude Code, like the rest of the family. The whole collection is at [zeesgames.com](https://zeesgames.com).
 
 ## Licence
